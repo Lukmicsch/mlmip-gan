@@ -2,7 +2,9 @@ import os
 import pathlib
 import argparse
 
-from utils.dict_functions import load_dict
+from utils.python_utils import load_config
+
+
 
 def get_args():
     """ Get command-line arguments. """
@@ -14,6 +16,9 @@ def get_args():
 
     return parser.parse_args()
 
+
+
+
 if __name__ == '__main__':
     args = get_args()
 
@@ -23,7 +28,7 @@ if __name__ == '__main__':
 
     # Initialize path to config and load dict
     config_path = os.path.join(conf_path, args.config)
-    config = load_dict(config_path)
+    config = load_config(config_path)
 
     if args.train:
         pass
