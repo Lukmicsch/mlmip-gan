@@ -21,8 +21,6 @@ class DataManager:
         self.data_format = config['data_format']
         self.compression_file_format = config['compression_file_format']
         
-        self.use_transform = config['use_transform']
-        self.frac_test = config['frac_test']
         self.width_and_height = config['width_and_height']
         self.z_dim = config['z_dim']
         
@@ -53,16 +51,13 @@ class DataManager:
         
         # Init custom transforms
         z_dim_transform = ZDimTransform(self.z_dim)
+        
+        transform = transforms.Compose([
+            z_dim_transform,
+            transforms.ToTensor(),
+        ])
 
-        if self.use_transform:
-            transform = transforms.Compose([
-                z_dim_transform,
-                transforms.ToTensor(),
-            ])
-
-            dataset = AneurysmDataset2D(cases, self.config, transform)
-        else:
-            dataset = AneurysmDataset2D(cases, self.config)
+        dataset = AneurysmDataset2D(cases, self.config, transform)
 
         return dataset
     

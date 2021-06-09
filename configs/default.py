@@ -7,6 +7,8 @@ config = {
   'compression_file_format': 'gz',
   'img_suffix': '_orig',
   'mask_suffix': '_masks',
+    
+  'use_transform': True,
 
   'batch_size': 4,
   'channels': 1,
