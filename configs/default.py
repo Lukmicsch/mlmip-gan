@@ -13,6 +13,8 @@ config = {
   'width_and_height': 256,
   'z_dim': 220,
 
+  'save_model': True,
+
   'adv_criterion': 'BCE',
   'recon_criterion': 'L1',
   'lambda_recon': 200,

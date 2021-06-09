@@ -45,24 +45,6 @@ class DataManager:
         all_cases = np.random.RandomState(seed=42).permutation(all_cases)  # Permute the cases (With consistency)
 
         return all_cases
-    
-            
-            
-    def get_train_test_split_cases(self):
-        """ Returns train and test split cases. """
-
-        all_cases = self.get_full_cases()
-        all_cases_count = len(all_cases)
-
-        test_count = round(self.frac_test * all_cases_count)
-        train_count = all_cases_count - test_count
-        
-        print("Split into %d train- and %d test-cases." % (train_count, test_count))
-
-        test_cases = all_cases[:test_count]
-        train_cases = all_cases[test_count:]
-
-        return train_cases, test_cases
 
     
     
@@ -74,7 +56,8 @@ class DataManager:
 
         if self.use_transform:
             transform = transforms.Compose([
-                z_dim_transform
+                z_dim_transform,
+                transforms.ToTensor(),
             ])
 
             dataset = AneurysmDataset2D(cases, self.config, transform)

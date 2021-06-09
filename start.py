@@ -3,6 +3,7 @@ import pathlib
 import argparse
 
 from utils.python_utils import load_config
+from pix2pix import run_pix2pix_train
 
 
 
@@ -12,7 +13,6 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default='default.json', help="Name of a json config file within configs folder. (default: 'default.json')")
     parser.add_argument("--train", default=False, action='store_true', help="Train the gan. (default: False)")
-    parser.add_argument("--load_data", default=False, action='store_true', help="Load data. (default: False)")
 
     return parser.parse_args()
 
@@ -31,4 +31,4 @@ if __name__ == '__main__':
     config = load_config(config_path)
 
     if args.train:
-        pass
+        run_pix2pix_train(config)
