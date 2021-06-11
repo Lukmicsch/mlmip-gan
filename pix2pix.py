@@ -1,8 +1,8 @@
 import torch
-import tqdm
 import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
 
 from utils.torch_utils import get_loss_fn
 from data.data_manager import DataManager
@@ -33,7 +33,7 @@ def run_pix2pix_train(config):
     data_manager = DataManager(config)
     full_cases = data_manager.get_full_cases()
 
-    dataset = DataManager.get_dataset_2d(full_cases)
+    dataset = data_manager.get_dataset_2d(full_cases)
 
     gen = UNet(input_dim, real_dim).to(device)
     gen_opt = torch.optim.Adam(gen.parameters(), lr=lr)
@@ -51,6 +51,13 @@ def run_pix2pix_train(config):
     for epoch in range(n_epochs):
         # Dataloader returns the batches
         for image, _ in tqdm(dataloader):
+            
+            # ME!
+            image = data_manager.prepare_image_batch(image).to(device)
+            print(image.shape)
+            exit(1)
+            
+            """
             image_width = image.shape[3]
             condition = image[:, :, :, :image_width // 2]
             condition = nn.functional.interpolate(condition, size=target_shape)
@@ -58,7 +65,7 @@ def run_pix2pix_train(config):
             real = nn.functional.interpolate(real, size=target_shape)
             cur_batch_size = len(condition)
             condition = condition.to(device)
-            real = real.to(device)
+            real = real.to(device) """
 
             ### Update discriminator ###
             disc_opt.zero_grad()  # Zero out the gradient before backpropagation

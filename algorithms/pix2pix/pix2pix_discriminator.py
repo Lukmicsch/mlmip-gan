@@ -1,14 +1,17 @@
 import torch
 from torch import nn
 
-from algorithms.pix2pix_blocks import FeatureMapBlock, ContractingBlock
+from algorithms.pix2pix.pix2pix_blocks import FeatureMapBlock, ContractingBlock
 
 
 
 class Discriminator(nn.Module):
-    """" PatchGAN discriminator, structured like contracting part of UNet. Output: matrix of real-fake values.  """
-
-
+    """"
+    PatchGAN discriminator, structured like contracting part of UNet. Output: matrix of real-fake values.  
+    Parameters:
+        input_channels: the number of image input channels
+        hidden_channels: the initial number of discriminator convolutional filters
+    """
 
     def __init__(self, input_channels, hidden_channels=8):
         super(Discriminator, self).__init__()

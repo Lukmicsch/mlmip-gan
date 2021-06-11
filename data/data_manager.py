@@ -54,7 +54,7 @@ class DataManager:
         
         transform = transforms.Compose([
             z_dim_transform,
-            transforms.ToTensor(),
+            #transforms.ToTensor(),
         ])
 
         dataset = AneurysmDataset2D(cases, self.config, transform)

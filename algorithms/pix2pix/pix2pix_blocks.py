@@ -6,9 +6,11 @@ from algorithms.algorithm_utils import crop
 
 
 class ContractingBlock(nn.Module):
-    """ Maxpool and conv layers. """
-
-
+    """
+    Maxpool and conv layers.
+    Values:
+        input_channels: the number of channels to expect from a given input
+    """
 
     def __init__(self, input_channels, use_dropout=False, use_bn=True):
         super(ContractingBlock, self).__init__()
@@ -26,6 +28,11 @@ class ContractingBlock(nn.Module):
 
 
     def forward(self, x):
+        """
+        Parameters:
+            x: image tensor of shape (batch size, channels, height, width)
+        """
+        
         x = self.conv1(x)
         if self.use_bn:
             x = self.batchnorm(x)
@@ -44,7 +51,11 @@ class ContractingBlock(nn.Module):
 
 
 class ExpandingBlock(nn.Module):
-    """ Upsampling and conv layers. """
+    """ 
+    Upsampling and conv layers.
+    Values:
+        input_channels: the number of channels to expect from a given input
+    """
 
     def __init__(self, input_channels, use_dropout=False, use_bn=True):
         super(ExpandingBlock, self).__init__()
@@ -63,6 +74,13 @@ class ExpandingBlock(nn.Module):
 
 
     def forward(self, x, skip_con_x):
+        """
+        Parameters:
+            x: image tensor of shape (batch size, channels, height, width)
+            skip_con_x: the image tensor from the contracting path (from the opposing block of x)
+                    for the skip connection
+        """
+        
         x = self.upsample(x)
         x = self.conv1(x)
         skip_con_x = crop(skip_con_x, x.shape)
@@ -84,7 +102,12 @@ class ExpandingBlock(nn.Module):
 
 
 class FeatureMapBlock(nn.Module):
-    """ Last conv layer in UNet to output. """
+    """ 
+    Last conv layer in UNet to output. 
+    Values:
+        input_channels: the number of channels to expect from a given input
+        output_channels: the number of channels to expect for a given output
+    """
 
     def __init__(self, input_channels, output_channels):
         super(FeatureMapBlock, self).__init__()
@@ -93,5 +116,10 @@ class FeatureMapBlock(nn.Module):
 
 
     def forward(self, x):
+        """
+        Parameters:
+            x: image tensor of shape (batch size, channels, height, width)
+        """
+        
         x = self.conv(x)
         return x

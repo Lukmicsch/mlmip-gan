@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 from algorithms.algorithm_utils import crop
-from algorithms.pix2pix_blocks import FeatureMapBlock, ContractingBlock, ExpandingBlock
+from algorithms.pix2pix.pix2pix_blocks import FeatureMapBlock, ContractingBlock, ExpandingBlock
 
 class UNet(nn.Module):
     '''

@@ -10,7 +10,7 @@ config = {
     
   'use_transform': True,
 
-  'batch_size': 4,
+  'batch_size': 1,
   'channels': 1,
   'width_and_height': 256,
   'z_dim': 220,
@@ -23,5 +23,5 @@ config = {
   'n_epochs': 20,
   'display_step': 200,
   'lr': 0.0002,
-  'device': 'cuda'
+  'device': 'cpu'
 }
