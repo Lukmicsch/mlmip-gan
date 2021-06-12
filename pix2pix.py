@@ -6,11 +6,11 @@ from tqdm.auto import tqdm
 
 from utils.torch_utils import get_loss_fn
 from data.data_manager import DataManager
-from algorithms.algorithm_utils import get_gen_loss
+from algorithms.pix2pix.pix2pix_utils import get_gen_loss
 from algorithms.algorithm_utils import weights_init
-from algorithms.unet import UNet
-from algorithms.pix2pix_discriminator import Discriminator
-from utils.torch_utils import show_tensor_images
+from algorithms.pix2pix.unet import UNet
+from algorithms.pix2pix.pix2pix_discriminator import Discriminator
+from utils.torch_utils import show_tensor_images_pix2pix
 
 
 def run_pix2pix_train(config):

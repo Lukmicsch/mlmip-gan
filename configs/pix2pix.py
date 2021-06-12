@@ -1,6 +1,8 @@
 config = {
 
   'data_path': '/data/training/',
+    
+  'algorithm': 'pix2pix',
 
   # E.g. 001_orig.nii.gz and 001_masks.nii.gz
   'data_format': 'nii',

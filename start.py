@@ -4,6 +4,7 @@ import argparse
 
 from utils.python_utils import load_config
 from pix2pix import run_pix2pix_train
+from dcgan import run_dcgan_train
 
 
 
@@ -28,6 +29,9 @@ if __name__ == '__main__':
     # Initialize path to config and load dict
     config_path = 'configs.' + args.config
     config = load_config(config_path)
+    
+    algorithm = config['algorithm']
 
     if args.train:
-        run_pix2pix_train(config)
+        if algorithm == "dcgan": run_dcgan_train(config)
+        if algorithm == "pix2pix": run_pix2pix_train(config)
