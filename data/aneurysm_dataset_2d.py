@@ -44,14 +44,13 @@ class AneurysmDataset2D(Dataset):
     def __getitem__(self, idx):
         # load image and ground-truth
         case = self.cases[idx]
-        
+
         image = self.__load_image(case)
         mask = self.__load_mask(case)
 
         # data augmentation
         sample = {'image': image, 'mask': mask}
         # Transformations can be integrated here
-        if self.transform:
-            sample = self.transform(sample)
+        sample = self.transform(sample)
 
         return sample['image'], sample['mask']
