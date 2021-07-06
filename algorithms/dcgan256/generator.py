@@ -21,8 +21,7 @@ class Generator(nn.Module):
             self.make_gen_block(hidden_dim, im_chan, kernel_size=4, final_layer=True),
         )
 
-    def make_gen_block(self, input_channels, output_channels, kernel_size=3,
-                       stride=2, first_layer=False, final_layer=False):
+    def make_gen_block(self, input_channels, output_channels, kernel_size=3, stride=2, final_layer=False):
         '''
         Function to return a sequence of operations corresponding to a generator block of DCGAN, 
         corresponding to a transposed convolution, a batchnorm (except for in the last layer), and an activation.
@@ -42,20 +41,16 @@ class Generator(nn.Module):
         #       4) If its the final layer, use a Tanh activation after the deconvolution.
 
         # Build the neural block
-        if first_layer:
-            return nn.Sequential(
-                nn.RelU()
-            )
-        elif final_layer:
-            return nn.Sequential(
-                nn.ConvTranspose2d(input_channels, output_channels, kernel_size, stride),
-                nn.Tanh()
-            )
-        else:
+        if not final_layer:
             return nn.Sequential(
                 nn.ConvTranspose2d(input_channels, output_channels, kernel_size, stride),
                 nn.BatchNorm2d(output_channels),
                 nn.ReLU()
+            )
+        else: # Final Layer
+            return nn.Sequential(
+                nn.ConvTranspose2d(input_channels, output_channels, kernel_size, stride),
+                nn.Tanh()
             )
 
     def unsqueeze_noise(self, noise):
