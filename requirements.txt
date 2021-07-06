@@ -4,3 +4,4 @@ tqdm
 torch
 matplotlib
 torchvision
+scikit-image==0.17.2

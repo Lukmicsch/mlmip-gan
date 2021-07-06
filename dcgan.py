@@ -6,11 +6,14 @@ from tqdm.auto import tqdm
 
 from algorithms.dcgan.discriminator import Discriminator
 from algorithms.dcgan.generator import Generator
+from algorithms.dcgan256.discriminator import Discriminator256
+from algorithms.dcgan256.generator import Generator256
 from algorithms.algorithm_utils import get_noise
 from utils.torch_utils import show_tensor_images_dcgan
 from data.data_manager import DataManager
 from algorithms.algorithm_utils import weights_init
 from utils.torch_utils import get_loss_fn
+from utils.torch_utils import plot_tensor_images
 
 def run_dcgan_train(config):
     # Init
@@ -18,7 +21,7 @@ def run_dcgan_train(config):
     full_cases = data_manager.get_full_cases()
 
     dataset = data_manager.get_dataset_2d(full_cases)
-    
+
     criterion = get_loss_fn('BCE')
     z_dim = config['z_dim']
     display_step = config['display_step']
@@ -31,28 +34,32 @@ def run_dcgan_train(config):
     # https://distill.pub/2017/momentum/ but you don’t need to worry about it for this course!
     beta_1 = config['beta_1']
     beta_2 = config['beta_2']
-    
+
     device = config['device']
-    
+
     save_model = config['save_model']
-    
-    gen = Generator(z_dim).to(device)
+
+    gen = Generator256(z_dim).to(device) if config['dcgan256'] else Generator(z_dim).to(device)
     gen_opt = torch.optim.Adam(gen.parameters(), lr=lr, betas=(beta_1, beta_2))
-    disc = Discriminator().to(device) 
+    disc = Discriminator256().to(device) if config['dcgan256'] else Discriminator().to(device)
     disc_opt = torch.optim.Adam(disc.parameters(), lr=lr, betas=(beta_1, beta_2))
-    
+    gen = gen.apply(weights_init)
+    disc = disc.apply(weights_init)
+
     cur_step = 0
     mean_generator_loss = 0
     mean_discriminator_loss = 0
-    
+
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    
+
     for epoch in range(n_epochs):
         # Dataloader returns the batches
         for real, _ in tqdm(dataloader):
-            
-            real = data_manager.prepare_image_batch(real).to(device)
-            
+
+            real = torch.unsqueeze(real.squeeze(), 1).float()
+
+            #real, _ = data_manager.prepare_image_batch(real)
+
             cur_batch_size = len(real)
             real = real.to(device)
 
@@ -86,10 +93,12 @@ def run_dcgan_train(config):
             mean_generator_loss += gen_loss.item() / display_step
 
             ## Visualization code ##
-            if cur_step % display_step == 0 and cur_step > 0:
+            #if cur_step % display_step == 0 and cur_step > 0:
+            if True:
                 print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}, epoch: {epoch}")
-                # Fake.shape [220, 1, 28, 28]
-                # real.shape [220, 1, 256, 256]
+                print("real: ", real.shape)
+                print("fake: ", fake.shape)
+                exit(1)
                 show_tensor_images_dcgan(fake)
                 show_tensor_images_dcgan(real)
                 mean_generator_loss = 0

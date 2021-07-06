@@ -1,3 +1,4 @@
+import numpy as np
 from torch import nn
 from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
@@ -14,6 +15,23 @@ def get_loss_fn(loss_fn):
 
     return criterion
 
+
+def plot_tensor_images(images, num_images, size):
+    indicies = range(images.shape[0])
+    image_choices = np.random.choice(indicies, num_images)
+
+    figure, ax = plt.subplots(1, 1)
+
+    # convert to numpy array
+    image_np = self.image_nib.get_fdata()
+    mask_np = self.mask_nib.get_fdata()
+
+    # get number of slices
+    _, _, slices = image_np.shape
+    ind = slices // 2
+
+    # plot image with mask overlay
+    image_plt = ax.imshow(self.overlay)
 
 
 def show_tensor_images_dcgan(image_tensor, num_images=25, size=(1, 28, 28)):

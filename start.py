@@ -7,7 +7,6 @@ from pix2pix import run_pix2pix_train
 from dcgan import run_dcgan_train
 
 
-
 def get_args():
     """ Get command-line arguments. """
 
@@ -16,8 +15,6 @@ def get_args():
     parser.add_argument("--train", default=False, action='store_true', help="Train the gan. (default: False)")
 
     return parser.parse_args()
-
-
 
 
 if __name__ == '__main__':
