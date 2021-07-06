@@ -40,11 +40,9 @@ class ZDimTransform(object):
             padded = np.zeros((pic.shape[0], pic.shape[1], self.z_dim))
             padded[:,:,upper_cut:-lower_cut] = pic
             pic = padded
-            print("Padding added.")
         else:
             # Cutting
             pic = pic[:,:,upper_cut:-lower_cut]
-            print("Cutting.")
 
         return pic
 

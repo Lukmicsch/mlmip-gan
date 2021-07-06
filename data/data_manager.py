@@ -9,6 +9,9 @@ from pathlib import Path
 
 from data.aneurysm_dataset_2d import AneurysmDataset2D
 from data.z_dim_transform import ZDimTransform
+from data.rescale_transform import RescaleTransform
+from data.reshape_transform import ReshapeTransform
+from data.color_channel_transform import ColorChannelTransform
 
 class DataManager:
 
@@ -21,8 +24,8 @@ class DataManager:
         self.data_format = config['data_format']
         self.compression_file_format = config['compression_file_format']
 
-        self.frac_test = config['frac_test']
         self.width_and_height = config['width_and_height']
+        self.width_and_height_to_model = config['width_and_height_to_model']
         self.z_dim = config['z_dim']
 
         self.suffix_complete = '.' + self.data_format + '.' + self.compression_file_format
@@ -45,31 +48,18 @@ class DataManager:
         return all_cases
 
 
-    def get_train_test_split_cases(self):
-        """ Returns train and test split cases. """
-
-        all_cases = self.get_full_cases()
-        all_cases_count = len(all_cases)
-
-        test_count = round(self.frac_test * all_cases_count)
-        train_count = all_cases_count - test_count
-
-        print("Split into %d train- and %d test-cases." % (train_count, test_count))
-
-        test_cases = all_cases[:test_count]
-        train_cases = all_cases[test_count:]
-
-        return train_cases, test_cases
-
-
     def get_dataset_2d(self, cases):
         """ Returns dataset optionally with transforms. """
 
         # Init custom transforms
         z_dim_transform = ZDimTransform(self.z_dim)
+        reshape_transform = ReshapeTransform()
+        rescale_transform = RescaleTransform(self.width_and_height_to_model)
 
         transform = transforms.Compose([
-            z_dim_transform
+            z_dim_transform,
+            reshape_transform,
+            rescale_transform,
         ])
 
         dataset = AneurysmDataset2D(cases, self.config, transform)

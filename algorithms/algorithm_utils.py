@@ -4,7 +4,7 @@ from torch import nn
 
 def crop(image, new_shape):
     """
-    Center-crop the image. 
+    Center-crop the image.
     Parameters:
         image: image tensor of shape (batch size, channels, height, width)
         new_shape: a torch.Size object with the shape you want x to have
@@ -30,9 +30,8 @@ def weights_init(m):
     if isinstance(m, nn.BatchNorm2d):
         torch.nn.init.normal_(m.weight, 0.0, 0.02)
         torch.nn.init.constant_(m.bias, 0)
-        
-        
-        
+
+
 def get_noise(n_samples, z_dim, device='cpu'):
     '''
     Function for creating noise vectors: Given the dimensions (n_samples, z_dim)
@@ -42,5 +41,5 @@ def get_noise(n_samples, z_dim, device='cpu'):
         z_dim: the dimension of the noise vector, a scalar
         device: the device type
     '''
-    
+
     return torch.randn(n_samples, z_dim, device=device)
