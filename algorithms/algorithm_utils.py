@@ -4,10 +4,11 @@ from torch import nn
 
 def crop(image, new_shape):
     """
-    Center-crop the image.
-    Parameters:
-        image: image tensor of shape (batch size, channels, height, width)
-        new_shape: a torch.Size object with the shape you want x to have
+    Center-crop the image
+
+    :param image: image tensor of shape (batch size, channels, height, width)
+    :param new_shape: a torch.Size object with the shape you want x to have
+    :return: cropped image
     """
 
     middle_height = image.shape[2] // 2
@@ -23,7 +24,12 @@ def crop(image, new_shape):
 
 
 def weights_init(m):
-    """ Init weights used by disc and gen. """
+    """
+    Init weights used by discriminator and generator.
+
+    :param m: given nn.module
+    :return: None
+    """
 
     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
         torch.nn.init.normal_(m.weight, 0.0, 0.02)
@@ -36,10 +42,11 @@ def get_noise(n_samples, z_dim, device='cpu'):
     '''
     Function for creating noise vectors: Given the dimensions (n_samples, z_dim)
     creates a tensor of that shape filled with random numbers from the normal distribution.
-    Parameters:
-        n_samples: the number of samples to generate, a scalar
-        z_dim: the dimension of the noise vector, a scalar
-        device: the device type
+
+    :param n_samples: the number of samples to generate, a scalar
+    :param z_dim: the dimension of the noise vector, a scalar
+    :param device: the device type
+    :return: noise tensor
     '''
 
     return torch.randn(n_samples, z_dim, device=device)
