@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -29,6 +30,7 @@ def run_dcgan_train(config):
     n_epochs = config['n_epochs']
     # A learning rate of 0.0002 works well on DCGAN
     lr = config['lr']
+    flip_labels = config['flip_labels']
 
     # These parameters control the optimizer's momentum, which you can read more about here:
     # https://distill.pub/2017/momentum/ but you don’t need to worry about it for this course!
@@ -38,6 +40,8 @@ def run_dcgan_train(config):
     device = config['device']
 
     save_model = config['save_model']
+    save_frequency = config['save_frequency']
+    model_path = config['model_path']
 
     gen = Generator256(z_dim).to(device) if config['algorithm'] == 'dcgan256' else Generator(z_dim).to(device)
     gen_opt = torch.optim.Adam(gen.parameters(), lr=lr, betas=(beta_1, beta_2))
@@ -74,9 +78,11 @@ def run_dcgan_train(config):
             fake_noise = get_noise(cur_batch_size, z_dim, device=device)
             fake = gen(fake_noise)
             disc_fake_pred = disc(fake.detach())
-            disc_fake_loss = criterion(disc_fake_pred, torch.zeros_like(disc_fake_pred))
+            fake_pred_labels = torch.ones_like(disc_fake_pred) if flip_labels else torch.zeros_like(disc_fake_pred)
+            disc_fake_loss = criterion(disc_fake_pred, fake_pred_labels)
             disc_real_pred = disc(real)
-            disc_real_loss = criterion(disc_real_pred, torch.ones_like(disc_real_pred))
+            real_pred_labels = torch.zeros_like(disc_real_pred) if flip_labels else torch.ones_like(disc_real_pred)
+            disc_real_loss = criterion(disc_real_pred, real_pred_labels)
             disc_loss = (disc_fake_loss + disc_real_loss) / 2
 
             # Keep track of the average discriminator loss
@@ -99,10 +105,17 @@ def run_dcgan_train(config):
             mean_generator_loss += gen_loss.item() / display_step
 
             ## Visualization code ##
-            if cur_step % display_step == 0 and cur_step > 0:
+            if cur_step % display_step == 0:
                 print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}, epoch: {epoch}")
                 plot_tensor_images(fake)
                 plot_tensor_images(real)
                 mean_generator_loss = 0
                 mean_discriminator_loss = 0
             cur_step += 1
+
+        if epoch % save_frequency == 0:
+            abs_path = os.path.abspath(model_path)
+            to_path = os.path.join(abs_path, config['algorithm'] + '_' + str(epoch) + ".pt")
+
+            print("Saving model to: %s" % to_path)
+            torch.save(gen, to_path)
