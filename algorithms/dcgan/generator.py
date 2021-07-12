@@ -42,11 +42,7 @@ class Generator(nn.Module):
         #       4) If its the final layer, use a Tanh activation after the deconvolution.
 
         # Build the neural block
-        if first_layer:
-            return nn.Sequential(
-                nn.RelU()
-            )
-        elif final_layer:
+        if final_layer:
             return nn.Sequential(
                 nn.ConvTranspose2d(input_channels, output_channels, kernel_size, stride),
                 nn.Tanh()
@@ -75,4 +71,6 @@ class Generator(nn.Module):
             noise: a noise tensor with dimensions (n_samples, z_dim)
         '''
         x = self.unsqueeze_noise(noise)
-        return self.gen(x)
+        x = self.gen(x)
+
+        return x

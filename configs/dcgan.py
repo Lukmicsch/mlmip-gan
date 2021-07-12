@@ -13,8 +13,9 @@ config = {
   'batch_size': 1,
   'channels': 1,
   'width_and_height': 256,
-  'width_and_height_to_model': 128,
+  'width_and_height_to_model': 32,
   'z_dim': 220,
+  'noise_dim': 10,
 
   'save_model': True,
 

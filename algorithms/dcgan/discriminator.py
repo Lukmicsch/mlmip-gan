@@ -33,7 +33,7 @@ class Discriminator(nn.Module):
         #       1) Add a convolutional layer using the given parameters.
         #       2) Do a batchnorm, except for the last layer.
         #       3) Follow each batchnorm with a LeakyReLU activation with slope 0.2.
-        
+
         # Build the neural block
         if not final_layer:
             return nn.Sequential(
@@ -54,4 +54,6 @@ class Discriminator(nn.Module):
             image: a flattened image tensor with dimension (im_dim)
         '''
         disc_pred = self.disc(image)
-        return disc_pred.view(len(disc_pred), -1)
+        disc_pred = disc_pred.view(len(disc_pred), -1)
+
+        return disc_pred
