@@ -23,7 +23,7 @@ class ReshapeTransform(object):
 
         # Restructuring
         h, w, z = batch.shape
-        batch = torch.tensor(batch)
+        batch = batch.clone().detach()
         image_slices = batch.permute(2, 0, 1).reshape(-1, h, w).float()
         image_slices = torch.unsqueeze(image_slices, axis=1)
 
@@ -39,7 +39,7 @@ class ReshapeTransform(object):
 
         # Restructuring
         h, w, z = batch.shape
-        batch = torch.tensor(batch)
+        batch = batch.clone().detach()
         mask_slices = batch.permute(2, 0, 1).reshape(-1, h, w).float()
         mask_slices = torch.unsqueeze(mask_slices, axis=1)
 

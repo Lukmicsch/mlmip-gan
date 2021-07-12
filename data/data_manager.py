@@ -11,7 +11,7 @@ from data.aneurysm_dataset_2d import AneurysmDataset2D
 from data.z_dim_transform import ZDimTransform
 from data.rescale_transform import RescaleTransform
 from data.reshape_transform import ReshapeTransform
-from data.color_channel_transform import ColorChannelTransform
+from data.clip_and_normalize_transform import ClipValuesAndNormalize
 
 class DataManager:
 
@@ -55,50 +55,15 @@ class DataManager:
         z_dim_transform = ZDimTransform(self.z_dim)
         reshape_transform = ReshapeTransform()
         rescale_transform = RescaleTransform(self.width_and_height_to_model)
+        clip_values_and_normalize_transform = ClipValuesAndNormalize(min_percentile=680.,max_percentile=6400.,mean=2819.1563145249925, std=1745.2284865700638)
 
         transform = transforms.Compose([
             z_dim_transform,
+            clip_values_and_normalize_transform,
             reshape_transform,
-            rescale_transform,
+            rescale_transform
         ])
 
         dataset = AneurysmDataset2D(cases, self.config, transform)
 
         return dataset
-
-
-    def prepare_image_batch(self, batch):
-        """ [batch_size, height, width, z_dim] to [batch_size * z_dim, 1, height, width]. """
-
-        # Restructuring
-        _, h, w, _ = batch.shape
-        image_slices = batch.permute(0, 3, 1, 2).reshape(-1, h, w).float()
-        image_slices = torch.unsqueeze(image_slices, axis=1)
-
-        batch_size_slices = image_slices.shape[0]
-
-        # Throw out all zero padded slices
-        indexing = torch.sum(image_slices, (2,3)).nonzero(as_tuple=True)
-        image_slices = torch.unsqueeze(image_slices[indexing], 1)
-        if batch_size_slices != image_slices.shape[0]:
-            print("Padding was removed.")
-
-        return image_slices, indexing
-
-
-    def prepare_mask_batch(self, batch, indexing):
-        """ [batch_size, height, width, z_dim] to [batch_size * z_dim, height, width]. """
-
-        # Restructuring
-        _, h, w, _ = batch.shape
-        mask_slices = batch.permute(0, 3, 1, 2).reshape(-1, h, w).float()
-        mask_slices = torch.unsqueeze(mask_slices, axis=1)
-        batch_size_slices = mask_slices.shape[0]
-
-        # Now remove padded images if necessary
-        mask_slices = mask_slices[indexing]
-
-        if batch_size_slices != mask_slices.shape[0]:
-            print("Padding was removed.")
-
-        return mask_slices
