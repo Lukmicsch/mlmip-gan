@@ -13,11 +13,14 @@ config = {
   'batch_size': 1,
   'channels': 1,
   'width_and_height': 256,
-  'width_and_height_to_model': 32,
+    'width_and_height_to_model': 28,
   'z_dim': 220,
   'noise_dim': 10,
+  'flip_labels': True,
 
   'save_model': True,
+  'save_frequency': 20,
+  'model_path': 'data/model/',
 
   'criterion': 'BCE',
   'beta_1': 0.5,

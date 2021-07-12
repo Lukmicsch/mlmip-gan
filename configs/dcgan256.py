@@ -16,15 +16,18 @@ config = {
   'width_and_height_to_model': 256,
   'z_dim': 220,
   'noise_dim': 100,
-  'images_per_batch_iter': 150,
+  'images_per_batch_iter': 64,
+  'flip_labels': True,
 
   'save_model': True,
+  'save_frequency': 20,
+  'model_path': 'data/model/',
 
   'criterion': 'BCE',
   'beta_1': 0.5,
   'beta_2': 0.999,
-    'n_epochs': 500,
-  'display_step': 109,
-  'lr': 0.0002,
+  'n_epochs': 1000,
+  'display_step': 327,
+  'lr': 0.0001,
   'device': 'cuda'
 }
