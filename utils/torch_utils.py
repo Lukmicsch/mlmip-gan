@@ -1,7 +1,50 @@
 import numpy as np
+import torch
 from torch import nn
 from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
+from functools import reduce
+from operator import __add__
+
+
+class Conv2dSamePadding(nn.Conv2d):
+    def __init__(self,*args,**kwargs):
+        super(Conv2dSamePadding, self).__init__(*args, **kwargs)
+        self.zero_pad_2d = nn.ZeroPad2d(reduce(__add__,
+            [(k // 2 + (k - 2 * (k // 2)) - 1, k // 2) for k in self.kernel_size[::-1]]))
+
+    def forward(self, input):
+        return  self._conv_forward(self.zero_pad_2d(input), self.weight, self.bias)
+
+
+class GaussianNoise(nn.Module):
+    """Gaussian noise regularizer.
+
+    Args:
+        sigma (float, optional): relative standard deviation used to generate the
+            noise. Relative means that it will be multiplied by the magnitude of
+            the value your are adding the noise to. This means that sigma can be
+            the same regardless of the scale of the vector.
+        is_relative_detach (bool, optional): whether to detach the variable before
+            computing the scale of the noise. If `False` then the scale of the noise
+            won't be seen as a constant but something to optimize: this will bias the
+            network to generate vectors with smaller values.
+    """
+
+    def __init__(self, sigma=0.1, is_relative_detach=True):
+        super().__init__()
+        self.sigma = sigma
+        self.is_relative_detach = is_relative_detach
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.noise = torch.tensor(0).to(device)
+
+    def forward(self, x):
+        if self.training and self.sigma != 0:
+            scale = self.sigma * x.detach() if self.is_relative_detach else self.sigma * x
+            sampled_noise = self.noise.repeat(*x.size()).float().normal_() * scale
+            x = x + sampled_noise
+        return x
+
 
 def get_loss_fn(loss_fn):
     """ Return loss function specified in config. """
@@ -16,42 +59,33 @@ def get_loss_fn(loss_fn):
     return criterion
 
 
-def plot_tensor_images(images, num_images, size):
-    indicies = range(images.shape[0])
-    image_choices = np.random.choice(indicies, num_images)
+def plot_tensor_images(images, num_images=9):
 
-    figure, ax = plt.subplots(1, 1)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # convert to numpy array
-    image_np = self.image_nib.get_fdata()
-    mask_np = self.mask_nib.get_fdata()
+    batch_size = range(images.shape[0])
+    indices = torch.tensor(np.random.choice(batch_size,
+                                                 num_images)).to(device)
+    images_selected = torch.index_select(images, 0,
+                                         indices).to('cpu').detach().numpy()
 
-    # get number of slices
-    _, _, slices = image_np.shape
-    ind = slices // 2
+    plot_size = 3
 
-    # plot image with mask overlay
-    image_plt = ax.imshow(self.overlay)
+    w = images.shape[2]
+    h = images.shape[3]
 
+    fig = plt.figure(figsize=(10, 10))
+    columns = 3
+    rows = 3
 
-def show_tensor_images_dcgan(image_tensor, num_images=25, size=(1, 28, 28)):
-    '''
-    Function for visualizing images: Given a tensor of images, number of images, and
-    size per image, plots and prints the images in an uniform grid.
-    '''
-    image_tensor = (image_tensor + 1) / 2
-    image_unflat = image_tensor.detach().cpu()
-    image_grid = make_grid(image_unflat[:num_images], nrow=5)
-    plt.imshow(image_grid.permute(1, 2, 0).squeeze())
-    plt.show()
+    # ax enables access to manipulate each of subplots
+    ax = []
 
+    for i in range(columns*rows):
+        # create subplot and append to ax
+        ax.append( fig.add_subplot(rows, columns, i+1) )
+        im = images_selected[i,0,:,:]#.astype(np.uint8)
+        plt.imshow(im, cmap="gray")
 
+    plt.show()  # finally, render the plot
 
-def show_tensor_images_pix2pix(image_tensor, num_images=25, size=(1, 28, 28)):
-    """ Visualize images from tensor. """
-
-    image_shifted = image_tensor
-    image_unflat = image_shifted.detach().cpu().view(-1, *size)
-    image_grid = make_grid(image_unflat[:num_images], nrow=5)
-    plt.imshow(image_grid.permute(1, 2, 0).squeeze())
-    plt.show()

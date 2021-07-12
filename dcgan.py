@@ -1,15 +1,15 @@
 import torch
 import torch.nn.functional as F
+import numpy as np
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 from algorithms.dcgan.discriminator import Discriminator
 from algorithms.dcgan.generator import Generator
-from algorithms.dcgan256.discriminator import Discriminator256
-from algorithms.dcgan256.generator import Generator256
+from algorithms.dcgan256.discriminator256 import Discriminator256
+from algorithms.dcgan256.generator256 import Generator256
 from algorithms.algorithm_utils import get_noise
-from utils.torch_utils import show_tensor_images_dcgan
 from data.data_manager import DataManager
 from algorithms.algorithm_utils import weights_init
 from utils.torch_utils import get_loss_fn
@@ -23,7 +23,7 @@ def run_dcgan_train(config):
     dataset = data_manager.get_dataset_2d(full_cases)
 
     criterion = get_loss_fn('BCE')
-    z_dim = config['z_dim']
+    z_dim = config['noise_dim']
     display_step = config['display_step']
     batch_size = config['batch_size']
     n_epochs = config['n_epochs']
@@ -39,9 +39,9 @@ def run_dcgan_train(config):
 
     save_model = config['save_model']
 
-    gen = Generator256(z_dim).to(device) if config['dcgan256'] else Generator(z_dim).to(device)
+    gen = Generator256(z_dim).to(device) if config['algorithm'] == 'dcgan256' else Generator(z_dim).to(device)
     gen_opt = torch.optim.Adam(gen.parameters(), lr=lr, betas=(beta_1, beta_2))
-    disc = Discriminator256().to(device) if config['dcgan256'] else Discriminator().to(device)
+    disc = Discriminator256().to(device) if config['algorithm'] == 'dcgan256' else Discriminator().to(device)
     disc_opt = torch.optim.Adam(disc.parameters(), lr=lr, betas=(beta_1, beta_2))
     gen = gen.apply(weights_init)
     disc = disc.apply(weights_init)
@@ -58,7 +58,13 @@ def run_dcgan_train(config):
 
             real = torch.unsqueeze(real.squeeze(), 1).float()
 
-            #real, _ = data_manager.prepare_image_batch(real)
+            # For sake of memory and smi indipendent distribution, randomly
+            # sample from Batch
+            if config['algorithm'] == 'dcgan256':
+                batch_s = len(real)
+                indices = torch.tensor(np.random.choice(batch_s,
+                                           config['images_per_batch_iter']))
+                real = torch.index_select(real, 0, indices)
 
             cur_batch_size = len(real)
             real = real.to(device)
@@ -93,14 +99,10 @@ def run_dcgan_train(config):
             mean_generator_loss += gen_loss.item() / display_step
 
             ## Visualization code ##
-            #if cur_step % display_step == 0 and cur_step > 0:
-            if True:
+            if cur_step % display_step == 0 and cur_step > 0:
                 print(f"Step {cur_step}: Generator loss: {mean_generator_loss}, discriminator loss: {mean_discriminator_loss}, epoch: {epoch}")
-                print("real: ", real.shape)
-                print("fake: ", fake.shape)
-                exit(1)
-                show_tensor_images_dcgan(fake)
-                show_tensor_images_dcgan(real)
+                plot_tensor_images(fake)
+                plot_tensor_images(real)
                 mean_generator_loss = 0
                 mean_discriminator_loss = 0
             cur_step += 1
