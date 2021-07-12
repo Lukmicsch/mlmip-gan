@@ -26,6 +26,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 python start.py --train --config dcgan256
 ```
 
+###### Data module
+For more information on how to use the data module, refere to the README in the data folder.
+
 ### Config Options
 - data_path: where to find the medical scans
 - algorithm: 'dcgan' or 'dcgan256'
