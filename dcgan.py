@@ -97,7 +97,8 @@ def run_dcgan_train(config):
             fake_noise_2 = get_noise(cur_batch_size, z_dim, device=device)
             fake_2 = gen(fake_noise_2)
             disc_fake_pred = disc(fake_2)
-            gen_loss = criterion(disc_fake_pred, torch.ones_like(disc_fake_pred))
+            disc_fake_labels = torch.zeros_like(disc_fake_pred) if flip_labels else torch.ones_like(disc_fake_pred)
+            gen_loss = criterion(disc_fake_pred, disc_fake_labels)
             gen_loss.backward()
             gen_opt.step()
 
