@@ -61,6 +61,6 @@ class ClipValuesAndNormalize(AbstractTransform):
 
     def transform_impl(self, image):
         image = torch.clamp(image, min=self.min_percentile, max=self.max_percentile)
-        image -= self.mean
-        image /= self.std
+        image -= self.min_percentile
+        image /= self.max_percentile
         return torch.squeeze(image)
