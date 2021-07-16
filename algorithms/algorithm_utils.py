@@ -28,7 +28,6 @@ def weights_init(m):
     Init weights used by discriminator and generator.
 
     :param m: given nn.module
-    :return: None
     """
 
     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):

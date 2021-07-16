@@ -6,11 +6,11 @@ from utils.torch_utils import Conv2dSamePadding
 class Generator256(nn.Module):
     '''
     Generator Class
-    Values:
-        z_dim: the dimension of the noise vector, a scalar
-        im_chan: the number of channels in the images, fitted for the dataset used, a scalar
+
+    :param z_dim: the dimension of the noise vector, a scalar
+    :param im_chan: the number of channels in the images, fitted for the dataset used, a scalar
               (MNIST is black-and-white, so 1 channel is your default)
-        hidden_dim: the inner dimension, a scalar
+    :param hidden_dim: the inner dimension, a scalar
     '''
     def __init__(self, z_dim=100, im_chan=1):
         super(Generator256, self).__init__()
@@ -39,15 +39,16 @@ class Generator256(nn.Module):
 
     def make_gen_block_1(self, input_size, output_size):
         '''
-        Function to return a sequence of operations corresponding to a generator block of DCGAN, 
+        Function to return a sequence of operations corresponding to a generator block of DCGAN,
         corresponding to a transposed convolution, a batchnorm (except for in the last layer), and an activation.
-        Parameters:
-            input_channels: how many channels the input feature representation has
-            output_channels: how many channels the output feature representation should have
-            kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
-            stride: the stride of the convolution
-            final_layer: a boolean, true if it is the final layer and false otherwise 
+
+        :param input_channels: how many channels the input feature representation has
+        :param output_channels: how many channels the output feature representation should have
+        :param kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
+        :param stride: the stride of the convolution
+        :param final_layer: a boolean, true if it is the final layer and false otherwise
                       (affects activation and batchnorm)
+        :return: first generator block
         '''
 
         #     Steps:
@@ -66,15 +67,16 @@ class Generator256(nn.Module):
 
     def make_gen_block_2(self, input_channels, output_channels=256, kernel_size=4, stride=1, final_layer=False):
         '''
-        Function to return a sequence of operations corresponding to a generator block of DCGAN, 
+        Function to return a sequence of operations corresponding to a generator block of DCGAN,
         corresponding to a transposed convolution, a batchnorm (except for in the last layer), and an activation.
         Parameters:
-            input_channels: how many channels the input feature representation has
-            output_channels: how many channels the output feature representation should have
-            kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
-            stride: the stride of the convolution
-            final_layer: a boolean, true if it is the final layer and false otherwise 
+        :param input_channels: how many channels the input feature representation has
+        :param output_channels: how many channels the output feature representation should have
+        :param kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
+        :param stride: the stride of the convolution
+        :param final_layer: a boolean, true if it is the final layer and false otherwise
                       (affects activation and batchnorm)
+        :return: second generator block
         '''
 
         #     Steps:
@@ -93,17 +95,17 @@ class Generator256(nn.Module):
     def make_gen_block_3(self, input_channels, output_channels,
                          kernel_size, stride, batch_norm=True, final_layer=False):
         '''
-        Function to return a sequence of operations corresponding to a generator block of DCGAN, 
+        Function to return a sequence of operations corresponding to a generator block of DCGAN,
         corresponding to a transposed convolution, a batchnorm (except for in the last layer), and an activation.
-        Parameters:
-            input_channels: how many channels the input feature representation has
-            output_channels: how many channels the output feature representation should have
-            kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
-            stride: the stride of the convolution
-            final_layer: a boolean, true if it is the final layer and false otherwise 
-                      (affects activation and batchnorm)
-        '''
 
+        :param input_channels: how many channels the input feature representation has
+        :param output_channels: how many channels the output feature representation should have
+        :param kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
+        :param stride: the stride of the convolution
+        :param final_layer: a boolean, true if it is the final layer and false otherwise
+                      (affects activation and batchnorm)
+        :return: third generator block
+        '''
         #     Steps:
         #       1) Do a transposed convolution using the given parameters.
         #       2) Do a batchnorm, except for the last layer.
@@ -129,16 +131,18 @@ class Generator256(nn.Module):
         else: # Final Layer
             return nn.Sequential(
                 Conv2dSamePadding(input_channels, output_channels, kernel_size, stride, 0, bias=False),
-                nn.Sigmoid()
+                #nn.Sigmoid()
+                nn.Tanh()
             )
 
 
     def unsqueeze_noise(self, noise):
         '''
-        Function for completing a forward pass of the generator: Given a noise tensor, 
+        Function for completing a forward pass of the generator: Given a noise tensor,
         returns a copy of that noise with width and height = 1 and channels = z_dim.
-        Parameters:
-            noise: a noise tensor with dimensions (n_samples, z_dim)
+
+        :param noise: a noise tensor with dimensions (n_samples, z_dim)
+        :return: noise tensor
         '''
         return noise.view(len(noise), self.z_dim)
 
@@ -146,8 +150,8 @@ class Generator256(nn.Module):
         '''
         Function for completing a forward pass of the generator: Given a noise tensor, 
         returns generated images.
-        Parameters:
-            noise: a noise tensor with dimensions (n_samples, z_dim)
+
+        :param noise: a noise tensor with dimensions (n_samples, z_dim)
         '''
         x = self.unsqueeze_noise(noise)
         x = self.gen(x)
