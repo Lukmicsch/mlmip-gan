@@ -8,6 +8,10 @@ from operator import __add__
 
 
 class Conv2dSamePadding(nn.Conv2d):
+    """
+    Convolutional layer with same padding. Equivalent to keras padding=same.
+    https://gist.github.com/sumanmichael/4de9dee93f972d47c80c4ade8e149ea6
+    """
     def __init__(self,*args,**kwargs):
         super(Conv2dSamePadding, self).__init__(*args, **kwargs)
         self.zero_pad_2d = nn.ZeroPad2d(reduce(__add__,
@@ -18,19 +22,10 @@ class Conv2dSamePadding(nn.Conv2d):
 
 
 class GaussianNoise(nn.Module):
-    """Gaussian noise regularizer.
-
-    Args:
-        sigma (float, optional): relative standard deviation used to generate the
-            noise. Relative means that it will be multiplied by the magnitude of
-            the value your are adding the noise to. This means that sigma can be
-            the same regardless of the scale of the vector.
-        is_relative_detach (bool, optional): whether to detach the variable before
-            computing the scale of the noise. If `False` then the scale of the noise
-            won't be seen as a constant but something to optimize: this will bias the
-            network to generate vectors with smaller values.
     """
-
+    Gaussian noise regularizer for discriminator.
+    https://discuss.pytorch.org/t/where-is-the-noise-layer-in-pytorch/2887/3
+    """
     def __init__(self, sigma=0.1, is_relative_detach=True):
         super().__init__()
         self.sigma = sigma
@@ -47,7 +42,12 @@ class GaussianNoise(nn.Module):
 
 
 def get_loss_fn(loss_fn):
-    """ Return loss function specified in config. """
+    """
+    Return loss function specified in config.
+
+    :param loss_fn: specifies the loss function
+    :return: the loss function
+    """
 
     criterion = None
 
@@ -60,7 +60,12 @@ def get_loss_fn(loss_fn):
 
 
 def plot_tensor_images(images, num_images=9):
+    """
+    Plots images in gray colormap, by default 9 with 3 per row and column.
 
+    :param images: the images to be plotted
+    :param num_images: how many images in total
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     batch_size = range(images.shape[0])

@@ -14,8 +14,15 @@ from data.reshape_transform import ReshapeTransform
 from data.clip_and_normalize_transform import ClipValuesAndNormalize
 
 class DataManager:
-
+    """
+    Data manager class
+    """
     def __init__(self, config):
+        """
+        Init class and construct path to image and mask.
+
+        :param config: configfile in configs/ folder
+        """
         self.config = config
 
         self.data_path = Path(config['data_path'])
@@ -28,13 +35,18 @@ class DataManager:
         self.width_and_height_to_model = config['width_and_height_to_model']
         self.z_dim = config['z_dim']
 
+        self.activation = config['activation']
+
         self.suffix_complete = '.' + self.data_format + '.' + self.compression_file_format
         self.mask_suffix_complete = self.mask_suffix + self.suffix_complete
         self.img_suffix_complete = self.img_suffix + self.suffix_complete
 
 
     def get_full_cases(self):
-        """ Returns all curated cases and permutates with seed. """
+        """
+        Returns all curated cases and permutates with seed.
+        :return: all cases from data folder
+        """
 
         all_img_suffix_complete = '*' + self.img_suffix_complete
 
@@ -49,13 +61,18 @@ class DataManager:
 
 
     def get_dataset_2d(self, cases):
-        """ Returns dataset optionally with transforms. """
+        """
+        Returns dataset optionally with transforms.
+
+        :param cases: all the cases which are supposed to be in the dataset
+        :return: the dataset
+        """
 
         # Init custom transforms
         z_dim_transform = ZDimTransform(self.z_dim)
         reshape_transform = ReshapeTransform()
         rescale_transform = RescaleTransform(self.width_and_height_to_model)
-        clip_values_and_normalize_transform = ClipValuesAndNormalize(min_percentile=680.,max_percentile=6400.,mean=2819.1563145249925, std=1745.2284865700638)
+        clip_values_and_normalize_transform = ClipValuesAndNormalize(min_percentile=680.,max_percentile=6400.,mean=2819.1563145249925, std=1745.2284865700638, activation=self.activation)
 
         transform = transforms.Compose([
             z_dim_transform,

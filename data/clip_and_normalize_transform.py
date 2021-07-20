@@ -4,6 +4,9 @@ from abc import ABC, abstractmethod
 
 
 class AbstractTransform(ABC):
+    """
+    Abstraction class for transform.
+    """
     @abstractmethod
     def transform_impl(self, image):
         pass
@@ -20,14 +23,14 @@ class AbstractTransform(ABC):
 
 
 class ClipValuesAndNormalize(AbstractTransform):
-    """Rescale the image in a sample to a given size.
-    Args:
-        output_size (tuple or int): Desired output size. If tuple, output is
-            matched to output_size. If int, smaller of image edges is matched
-            to output_size keeping aspect ratio the same.
     """
+    Rescale the image in a sample to a given size.
 
-    def __init__(self, min_percentile, max_percentile, mean, std):
+    :param output_size (tuple or int): Desired output size. If tuple, output is
+    :param matched to output_size. If int, smaller of image edges is matched
+    :param to output_size keeping aspect ratio the same.
+    """
+    def __init__(self, min_percentile, max_percentile, mean, std, activation):
         assert isinstance(min_percentile, float)
         assert isinstance(max_percentile, float)
         assert isinstance(mean, float)
@@ -36,8 +39,15 @@ class ClipValuesAndNormalize(AbstractTransform):
         self.std = std
         self.min_percentile = min_percentile
         self.max_percentile = max_percentile
+        self.activation = activation
 
     def __call__(self, sample):
+        """
+        Call to the transformation
+
+        :param sample: the image, mask sample
+        :return: the transformed sample
+        """
         if isinstance(sample, Dict):
             if "inter_mask" in sample:
                 image, mask, inter_mask = (
@@ -59,8 +69,23 @@ class ClipValuesAndNormalize(AbstractTransform):
         else:
             return self.transform_impl(sample)
 
+
     def transform_impl(self, image):
+        """
+        The actual transformation implementation.
+
+        :param image: the image to normalize and clip
+        :return: the normalized and clipped image
+        """
         image = torch.clamp(image, min=self.min_percentile, max=self.max_percentile)
-        image -= self.min_percentile
-        image /= self.max_percentile
+
+        if self.activation == 'tanh':
+            i_range = self.max_percentile - self.min_percentile
+            image -= self.min_percentile
+            image /= i_range
+            image = image * 2 - 1
+        elif self.activation == 'sigmoid':
+            image -= self.min_percentile
+            image /= self.max_percentile
+
         return torch.squeeze(image)

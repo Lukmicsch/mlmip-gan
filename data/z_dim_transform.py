@@ -1,13 +1,19 @@
 import numpy as np
 
 class ZDimTransform(object):
-    """ Returns image with given z_dim. """
-
+    """
+    Returns the 3d scan with given z_dim.
+    """
     def __init__(self, z_dim):
         self.z_dim = z_dim
 
     def __call__(self, sample):
-        """ Check for false z_dim and transform images. """
+        """
+        Check for false z_dim and transform images.
+
+        :param sample: the image, mask sample
+        :return: the transformed sample
+        """
 
         img = sample['image']
         mask = sample['mask']
@@ -25,8 +31,14 @@ class ZDimTransform(object):
 
         return sample
 
-    def __transform_z_dim__(self, pic, z_dim):
-        """ Transforms given image. """
+    def __transform_z_dim__(self, scan, z_dim):
+        """
+        Transforms given scan, cutting/padding from above and below.
+
+        :param scan: the given 3d scan
+        :param z_dim: where to trim the scan
+        :return: the transformed scan
+        """
 
         excess = z_dim - self.z_dim
 
@@ -37,14 +49,14 @@ class ZDimTransform(object):
             # Padding with zeros
             upper_cut = -upper_cut
             lower_cut = -lower_cut
-            padded = np.zeros((pic.shape[0], pic.shape[1], self.z_dim))
-            padded[:,:,upper_cut:-lower_cut] = pic
-            pic = padded
+            padded = np.zeros((scan.shape[0], scan.shape[1], self.z_dim))
+            padded[:,:,upper_cut:-lower_cut] = scan
+            scan = padded
         else:
             # Cutting
-            pic = pic[:,:,upper_cut:-lower_cut]
+            scan = scan[:,:,upper_cut:-lower_cut]
 
-        return pic
+        return scan
 
     def __repr__(self):
         return self.__class__.__name__ + '()'

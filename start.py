@@ -6,7 +6,9 @@ from utils.python_utils import load_config
 from dcgan import run_dcgan_train
 
 def get_args():
-    """ Get command-line arguments. """
+    """
+    Get command-line arguments.
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default='dcgan256.py', help="Name of the python config file within configs folder. (default: 'dcgan256.json')")

@@ -17,6 +17,13 @@ from utils.torch_utils import get_loss_fn
 from utils.torch_utils import plot_tensor_images
 
 def run_dcgan_train(config):
+    """
+    Trainings loop for dcgan.
+
+    :param config: the python config file within /configs folder,
+    also specifying which dcgan to use.
+    """
+
     # Init
     data_manager = DataManager(config)
     full_cases = data_manager.get_full_cases()

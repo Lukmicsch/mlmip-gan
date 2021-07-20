@@ -18,6 +18,7 @@ config = {
   'noise_dim': 100,
   'images_per_batch_iter': 64,
   'flip_labels': True,
+  'activation': 'tanh',
 
   'save_model': True,
   'save_frequency': 20,
@@ -28,6 +29,6 @@ config = {
   'beta_2': 0.999,
   'n_epochs': 1000,
   'display_step': 327,
-  'lr': 0.0001,
+  'lr': 0.0002,
   'device': 'cuda'
 }

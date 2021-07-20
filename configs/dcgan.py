@@ -17,6 +17,7 @@ config = {
   'z_dim': 220,
   'noise_dim': 10,
   'flip_labels': True,
+  'activation': 'tanh',
 
   'save_model': True,
   'save_frequency': 20,

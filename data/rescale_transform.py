@@ -2,13 +2,14 @@ import numpy as np
 from skimage.transform import resize
 
 class RescaleTransform(object):
-    """Rescale the image in a sample to a given size with shape (batch_size,
+    """
+    Rescale the image in a sample to a given size with shape (batch_size,
     height, width, 1).
 
-    Args:
-        output_size (tuple or int): Desired output size. If tuple, output is
+    :param output_size (tuple or int): Desired output size. If tuple, output is
             matched to output_size. If int, smaller of image edges is matched
             to output_size keeping aspect ratio the same.
+    :return: the rescaled image and mask
     """
 
     def __init__(self, output_size):
