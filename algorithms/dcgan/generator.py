@@ -6,8 +6,7 @@ class Generator(nn.Module):
     Generator Class
 
     :param z_dim: the dimension of the noise vector, a scalar
-    :param im_chan: the number of channels in the images, fitted for the dataset used, a scalar
-              (MNIST is black-and-white, so 1 channel is your default)
+    :param im_chan: the number of channels in the images
     :param hidden_dim: the inner dimension, a scalar
     '''
     def __init__(self, z_dim=10, im_chan=1, hidden_dim=64):
@@ -35,13 +34,6 @@ class Generator(nn.Module):
                       (affects activation and batchnorm)
         :return: a generator block
         '''
-
-        #     Steps:
-        #       1) Do a transposed convolution using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a ReLU activation.
-        #       4) If its the final layer, use a Tanh activation after the deconvolution.
-
         # Build the neural block
         if final_layer:
             return nn.Sequential(

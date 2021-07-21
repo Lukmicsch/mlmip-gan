@@ -24,11 +24,13 @@ class AbstractTransform(ABC):
 
 class ClipValuesAndNormalize(AbstractTransform):
     """
-    Rescale the image in a sample to a given size.
+    Transform to clip and normalize the dataset.
 
-    :param output_size (tuple or int): Desired output size. If tuple, output is
-    :param matched to output_size. If int, smaller of image edges is matched
-    :param to output_size keeping aspect ratio the same.
+    :param min_percentile: of the intensity values
+    :param max_percentile: of the intensity values
+    :param mean: of the intensity values
+    :param std: of the intensity values
+    :param activation: which activation function is used by the gan
     """
     def __init__(self, min_percentile, max_percentile, mean, std, activation):
         assert isinstance(min_percentile, float)

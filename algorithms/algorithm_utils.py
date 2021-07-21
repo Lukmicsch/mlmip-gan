@@ -10,7 +10,6 @@ def crop(image, new_shape):
     :param new_shape: a torch.Size object with the shape you want x to have
     :return: cropped image
     """
-
     middle_height = image.shape[2] // 2
     middle_width = image.shape[3] // 2
     starting_height = middle_height - round(new_shape[2] / 2)
@@ -29,7 +28,6 @@ def weights_init(m):
 
     :param m: given nn.module
     """
-
     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
         torch.nn.init.normal_(m.weight, 0.0, 0.02)
     if isinstance(m, nn.BatchNorm2d):
@@ -47,5 +45,4 @@ def get_noise(n_samples, z_dim, device='cpu'):
     :param device: the device type
     :return: noise tensor
     '''
-
     return torch.randn(n_samples, z_dim, device=device)

@@ -6,8 +6,7 @@ class Discriminator256(nn.Module):
     '''
     Discriminator Class
 
-    :param im_chan: the number of channels in the images, fitted for the dataset used, a scalar
-              (MNIST is black-and-white, so 1 channel is your default)
+    :param im_chan: the number of channels in the images
     :param hidden_dim: the inner dimension, a scalar
     '''
     def __init__(self, im_chan=1, hidden_dim=16):
@@ -35,8 +34,7 @@ class Discriminator256(nn.Module):
                         kernel_size=3,
                         stride=1, batch_norm=True, final_layer=False):
         '''
-        Function to return a sequence of operations corresponding to a discriminator block of DCGAN,
-        corresponding to a convolution, a batchnorm (except for in the last layer), and an activation.
+        Function to return a sequence of operations corresponding to a discriminator block of DCGAN.
 
         :param input_channels: how many channels the input feature representation has
         :param output_channels: how many channels the output feature representation should have
@@ -46,11 +44,6 @@ class Discriminator256(nn.Module):
                       (affects activation and batchnorm)
         :return: discriminator block
         '''
-        #     Steps:
-        #       1) Add a convolutional layer using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a LeakyReLU activation with slope 0.2.
-
         # Build the neural block
         if not final_layer:
             if batch_norm:

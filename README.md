@@ -12,8 +12,10 @@ Results:
 - While the downsampled images (28x28) got some recognizable results,
 <img src="https://github.com/Lukmicsch/mlmip-gan/blob/master/media/28x28.gif" width="500" height="500" />
 
-- the original images (256x256) did not yield anything close to resemblance. We will keep working on that.
+- the original images (256x256) did not yield anything close to resemblance.
 <img src="https://github.com/Lukmicsch/mlmip-gan/blob/master/media/256x256.gif" width="500" height="500" />
+
+- Originals for comparisson could not be included in the repository due to confidentiality.
 
 ### Usage
 ```bash

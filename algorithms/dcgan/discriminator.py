@@ -4,8 +4,7 @@ from torch import nn
 class Discriminator(nn.Module):
     '''
     Discriminator Class
-    :param im_chan: the number of channels in the images, fitted for the dataset used, a scalar
-              (MNIST is black-and-white, so 1 channel is your default)
+    :param im_chan: the number of channels in the images
     :param hidden_dim: the inner dimension, a scalar
     '''
     def __init__(self, im_chan=1, hidden_dim=16):
@@ -29,11 +28,6 @@ class Discriminator(nn.Module):
                       (affects activation and batchnorm)
         :return: discriminator block
         '''
-        #     Steps:
-        #       1) Add a convolutional layer using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a LeakyReLU activation with slope 0.2.
-
         # Build the neural block
         if not final_layer:
             return nn.Sequential(

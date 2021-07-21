@@ -8,8 +8,7 @@ class Generator256(nn.Module):
     Generator Class
 
     :param z_dim: the dimension of the noise vector, a scalar
-    :param im_chan: the number of channels in the images, fitted for the dataset used, a scalar
-              (MNIST is black-and-white, so 1 channel is your default)
+    :param im_chan: the number of channels in the images
     :param hidden_dim: the inner dimension, a scalar
     '''
     def __init__(self, z_dim=100, im_chan=1):
@@ -50,14 +49,6 @@ class Generator256(nn.Module):
                       (affects activation and batchnorm)
         :return: first generator block
         '''
-
-        #     Steps:
-        #       1) Do a transposed convolution using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a ReLU activation.
-        #       4) If its the final layer, use a Tanh activation after the deconvolution.
-
-        # Build the neural block
         return nn.Sequential(
             nn.Linear(input_size, output_size),
             nn.BatchNorm1d(output_size),
@@ -70,6 +61,7 @@ class Generator256(nn.Module):
         Function to return a sequence of operations corresponding to a generator block of DCGAN,
         corresponding to a transposed convolution, a batchnorm (except for in the last layer), and an activation.
         Parameters:
+
         :param input_channels: how many channels the input feature representation has
         :param output_channels: how many channels the output feature representation should have
         :param kernel_size: the size of each convolutional filter, equivalent to (kernel_size, kernel_size)
@@ -78,14 +70,6 @@ class Generator256(nn.Module):
                       (affects activation and batchnorm)
         :return: second generator block
         '''
-
-        #     Steps:
-        #       1) Do a transposed convolution using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a ReLU activation.
-        #       4) If its the final layer, use a Tanh activation after the deconvolution.
-
-        # Build the neural block
         return nn.Sequential(
             nn.ConvTranspose2d(input_channels, output_channels, kernel_size, stride),
             nn.ReLU()
@@ -106,13 +90,6 @@ class Generator256(nn.Module):
                       (affects activation and batchnorm)
         :return: third generator block
         '''
-        #     Steps:
-        #       1) Do a transposed convolution using the given parameters.
-        #       2) Do a batchnorm, except for the last layer.
-        #       3) Follow each batchnorm with a ReLU activation.
-        #       4) If its the final layer, use a Tanh activation after the deconvolution.
-
-        # Build the neural block
         if not final_layer:
             if batch_norm:
                 return nn.Sequential(
