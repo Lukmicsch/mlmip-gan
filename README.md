@@ -8,6 +8,13 @@ Credits:
 - The small dcgan was created after partaking in deeplearning.ai's GAN spezialisation
 - The Bigger GAN was designed according to https://github.com/t0nberryking/DCGAN256, which is written in keras and itself is based on https://medium.com/@utk.is.here/keep-calm-and-train-a-gan-pitfalls-and-tips-on-training-generative-adversarial-networks-edd529764aa9. 
 
+Results:
+While the downsampled images (28x28) got some recognizable results,
+![alt text](https://github.com/Lukmicsch/mlmip-gan/media/256x256.gif)
+
+The original images (256x256) did not yield anything close to resemblance. We will keep working on that.
+![alt text](https://github.com/Lukmicsch/mlmip-gan/media/28x28.gif)
+
 ### Usage
 ```bash
 pip install -r requirements.txt
